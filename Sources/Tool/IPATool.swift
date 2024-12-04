@@ -42,6 +42,10 @@ extension IPATool {
         try export()
     }
     
+    func uploadPGY() throws {
+        
+    }
+    
 }
 
 // MARK: - Private

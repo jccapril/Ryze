@@ -125,9 +125,9 @@ extension Ryze {
         if !workspacePath.exists {
             throw ValidationError("没有找到xcworkspace文件".red)
         }
+        
         let exportOptionsPlist = if let exportOptionsPlist { exportOptionsPlist }
                                     else { "\(currentPath)/ExportOptions.plist" }
-        
         let exportOptionsPlistPath = Path(exportOptionsPlist)
         if !exportOptionsPlistPath.exists {
             throw ValidationError("没有找到exportOptionsPlist文件".red)
@@ -140,6 +140,7 @@ extension Ryze {
         let ipaTool = IPATool(scheme: name, workspace: workspace, configuration: configuration, archivePath: archivePath, exportPath: exportPath, exportOptionsPlist: exportOptionsPlist)
         
         try ipaTool.build()
+
     }
 }
 
