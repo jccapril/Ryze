@@ -41,14 +41,18 @@ struct Ryze: ParsableCommand {
         path = result.string
         print(">>> 检测到xcodeproj文件：\(path)".green)
         
-        print(">>> 是否是Beta：\(isBeta)".yellow)
-        
         try installPod()
        
         try buildProject()
         
+        // TODO: - 上传 IPA
+        
+        // TODO: - 删除 xcode build 生成的文件
+        
         try increaseBuildNumber()
         print(">>> 增加Build号".green)
+        
+        // TODO: - 提交 Git
     }
     
 
@@ -109,29 +113,18 @@ extension Ryze {
     }
     
     func buildProject() throws {
-        guard let workspacePath = try findXcWorkspacePath() else {
-            throw ValidationError("没有找到xcworkspace文件".red)
-        }
         
         let currentPath = Path.current.string
-        let workspace = workspacePath.string
-        
-        print("=========== xcodebuild Clean Begin ===========".green)
-        try shellOut(to: .xcodebuildClean(workspace: workspace, scheme: name, configuration: .debug))
-        print("=========== xcodebuild Clean Success ===========".green)
-        
-        let archivePath = "\(currentPath)/\(name).xcarchive"
-        
-        print("=========== xcodebuild Archive Begin ===========".green)
-        try shellOut(to: .xcodebuildArchive(workspace: workspace, scheme: name, configuration: .debug, archivePath: archivePath))
-        print("=========== xcodebuild Archive Success ===========".green)
-        
-        let exportPath = "\(currentPath)/.build"
+        let tempBuildPath = "\(currentPath)/.build"
+        let workspace = "\(currentPath)/\(name).xcworkspace"
         let exportOptionsPlist = "\(currentPath)/ExportOptions.plist"
+        let archivePath = "\(tempBuildPath)/\(name).xcarchive"
+        let exportPath = tempBuildPath
+        let configuration: Configuration = .debug
+
+        let ipaTool = IPATool(scheme: name, workspace: workspace, configuration: configuration, archivePath: archivePath, exportPath: exportPath, exportOptionsPlist: exportOptionsPlist)
         
-        print("=========== xcodebuild Export IPA Begin ===========".green)
-        try shellOut(to: .xcodebuildExportArchive(archivePath: archivePath, configuration: .debug, exportPath: exportPath, exportOptionsPlist: exportOptionsPlist))
-        print("=========== xcodebuild Export IPA Success ===========".green)
+        try ipaTool.build()
     }
 }
 
