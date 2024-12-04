@@ -18,6 +18,9 @@ struct Ryze: ParsableCommand {
     @Flag(name: .customLong("beta"), help: "是否Beta版本")
     var isBeta = false
     
+    @Option(help: "exportOptionsPlist路径")
+    var exportOptionsPlist: String?
+    
     var path: String = ""
     
     var name: String = ""
@@ -116,8 +119,20 @@ extension Ryze {
         
         let currentPath = Path.current.string
         let tempBuildPath = "\(currentPath)/.build"
+       
         let workspace = "\(currentPath)/\(name).xcworkspace"
-        let exportOptionsPlist = "\(currentPath)/ExportOptions.plist"
+        let workspacePath = Path(workspace)
+        if !workspacePath.exists {
+            throw ValidationError("没有找到xcworkspace文件".red)
+        }
+        let exportOptionsPlist = if let exportOptionsPlist { exportOptionsPlist }
+                                else { "\(currentPath)/ExportOptions.plist" }
+        
+        let exportOptionsPlistPath = Path(exportOptionsPlist)
+        if !exportOptionsPlistPath.exists {
+            throw ValidationError("没有找到exportOptionsPlist文件".red)
+        }
+        
         let archivePath = "\(tempBuildPath)/\(name).xcarchive"
         let exportPath = tempBuildPath
         let configuration: Configuration = .debug
