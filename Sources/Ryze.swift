@@ -126,7 +126,7 @@ extension Ryze {
             throw ValidationError("没有找到xcworkspace文件".red)
         }
         let exportOptionsPlist = if let exportOptionsPlist { exportOptionsPlist }
-                                else { "\(currentPath)/ExportOptions.plist" }
+                                    else { "\(currentPath)/ExportOptions.plist" }
         
         let exportOptionsPlistPath = Path(exportOptionsPlist)
         if !exportOptionsPlistPath.exists {
