@@ -8,7 +8,7 @@
 import ShellOut
 
 
-enum Configuration: String {
+enum Configuration: String, Decodable {
     case debug = "Debug"
     case release = "Release"
 }
@@ -25,7 +25,7 @@ extension ShellOutCommand {
         return ShellOutCommand(string: "xcodebuild archive -workspace \(workspace) -scheme \(scheme) -configuration \(configuration.rawValue) -archivePath \(archivePath) -quiet")
     }
     
-    /// exportArchive
+    /// ExportArchive
     static func xcodebuildExportArchive(archivePath: String, configuration: Configuration, exportPath: String, exportOptionsPlist: String) -> ShellOutCommand {
         return ShellOutCommand(string: "xcodebuild -exportArchive -archivePath \(archivePath) -configuration \(configuration.rawValue) -exportPath \(exportPath) -exportOptionsPlist \(exportOptionsPlist) -quiet")
     }

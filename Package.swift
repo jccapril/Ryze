@@ -11,7 +11,8 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
         .package(url: "https://github.com/tuist/XcodeProj.git", from: "8.12.0"),
         .package(url: "https://github.com/onevcat/Rainbow", from: "4.0.0"),
-        .package(url: "https://github.com/JohnSundell/ShellOut.git", from: "2.0.0")
+        .package(url: "https://github.com/JohnSundell/ShellOut.git", from: "2.0.0"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -24,6 +25,7 @@ let package = Package(
                 .product(name: "XcodeProj", package: "XcodeProj"),
                 .product(name: "Rainbow", package: "Rainbow"),
                 .product(name: "ShellOut", package: "ShellOut"),
+                .product(name: "Logging", package: "swift-log"),
             ],
             path: "Sources"
         ),

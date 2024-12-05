@@ -6,7 +6,10 @@
 //
 
 import ShellOut
+import Rainbow
+import Logging
 
+/// IPA工具
 struct IPATool {
 
     // 项目名称
@@ -22,7 +25,16 @@ struct IPATool {
     // exportOptionsPlist
     let exportOptionsPlist: String
     
+    let logger: Logger = Logger(label: "ryze-ipatool")
     
+    /// IPATool
+    /// - Parameters:
+    ///   - scheme: 项目名
+    ///   - workspace: workspace文件路径
+    ///   - configuration: debug、release
+    ///   - archivePath: 生成的xcarchive文件路径
+    ///   - exportPath: IPA导出路径
+    ///   - exportOptionsPlist: 导出参数文件路径
     init(scheme: String, workspace: String, configuration: Configuration, archivePath: String, exportPath: String, exportOptionsPlist: String) {
         self.scheme = scheme
         self.workspace = workspace
@@ -46,27 +58,29 @@ extension IPATool {
         
     }
     
+    func deleteTempFiles() throws {
+        
+    }
 }
 
 // MARK: - Private
 private extension IPATool {
     
     func clean() throws {
-        print("=========== xcodebuild Clean Begin ===========".green)
+        print("=========== xcodebuild Clean Begin ===========".yellow)
         try shellOut(to: .xcodebuildClean(workspace: workspace, scheme: scheme, configuration: configuration))
         print("=========== xcodebuild Clean Success ===========".green)
     }
     
     func archive() throws{
-        print("=========== xcodebuild Archive Begin ===========".green)
+        print("=========== xcodebuild Archive Begin ===========".yellow)
         try shellOut(to: .xcodebuildArchive(workspace: workspace, scheme: scheme, configuration: configuration, archivePath: archivePath))
         print("=========== xcodebuild Archive Success ===========".green)
     }
     
     func export() throws{
-        print("=========== xcodebuild Export IPA Begin ===========".green)
+        print("=========== xcodebuild Export IPA Begin ===========".yellow)
         try shellOut(to: .xcodebuildExportArchive(archivePath: archivePath, configuration: configuration, exportPath: exportPath, exportOptionsPlist: exportOptionsPlist))
         print("=========== xcodebuild Export IPA Success ===========".green)
     }
-    
 }

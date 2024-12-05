@@ -11,10 +11,10 @@ import XcodeProj
 import PathKit
 import Rainbow
 import ShellOut
+import Logging
 
 @main
 struct Ryze: ParsableCommand {
-    
     @Flag(name: .customLong("beta"), help: "是否Beta版本")
     var isBeta = false
     
@@ -27,6 +27,12 @@ struct Ryze: ParsableCommand {
     
     @Argument(help: "项目名称")
     var argument: [String]
+    
+    @Unparsed
+    var logger: Logger = Logger(label: "ryze")
+    
+//    @Unparsed
+//    var ipaTool: IPATool?
     
     mutating func validate() throws {
         
@@ -41,16 +47,24 @@ struct Ryze: ParsableCommand {
         guard let result = try findXcodeProjPath() else {
             throw ValidationError("没有找到xcodeproj文件".red)
         }
+
+        
         path = result.string
-        print(">>> 检测到xcodeproj文件：\(path)".green)
+        logger.info("检测到xcodeproj文件：\(path)")
         
         try installPod()
        
-        try buildProject()
+        let ipaTool = try generateIPATool()
+        
+        logger.info("开始打包")
+        try ipaTool.build()
+        logger.info("打包结束")
         
         // TODO: - 上传 IPA
+        try ipaTool.uploadPGY()
         
-        // TODO: - 删除 xcode build 生成的文件
+        // TODO: - 删除 xcode build 生成的临时文件
+        try ipaTool.deleteTempFiles()
         
         try increaseBuildNumber()
         print(">>> 增加Build号".green)
@@ -110,12 +124,12 @@ extension Ryze {
     }
     
     func installPod() throws {
-        print("=========== pod install Begin ===========".green)
+        print("=========== pod install Begin ===========".yellow)
         try shellOut(to: .installAndUpdateCocoaPods())
         print("=========== pod install Success ===========".green)
     }
     
-    func buildProject() throws {
+    func generateIPATool() throws -> IPATool {
         
         let currentPath = Path.current.string
         let tempBuildPath = "\(currentPath)/.build"
@@ -139,7 +153,7 @@ extension Ryze {
 
         let ipaTool = IPATool(scheme: name, workspace: workspace, configuration: configuration, archivePath: archivePath, exportPath: exportPath, exportOptionsPlist: exportOptionsPlist)
         
-        try ipaTool.build()
+        return ipaTool
 
     }
 }
