@@ -31,7 +31,7 @@ struct IPATool {
     
     let apiKey: String
     
-    let logger: Logger = Logger(label: "ryze-ipatool")
+    let logger: Logger = Logger(label: "ipatool")
     
     /// IPATool
     /// - Parameters:

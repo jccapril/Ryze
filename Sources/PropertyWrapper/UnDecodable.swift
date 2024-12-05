@@ -6,7 +6,7 @@
 //
 
 @propertyWrapper
-struct Unparsed<Value>: Decodable {
+struct UnDecodable<Value>: Decodable {
     private var value: Value?
     
     init(wrappedValue: Value) { value = wrappedValue }

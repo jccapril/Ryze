@@ -34,8 +34,6 @@ struct Params: SendCodable {
     }
 }
 
-
-
 // MARK: - PGYBuildInfo
 struct PGYBuildInfo: SendCodable {
     let buildQRCodeURL: String

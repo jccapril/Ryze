@@ -15,26 +15,32 @@ import Logging
 
 @main
 struct Ryze: AsyncParsableCommand {
-    @Flag(name: .customLong("beta"), help: "是否Beta版本")
-    var isBeta = false
+//    @Flag(name: .customLong("beta"), help: "是否Beta版本")
+//    var isBeta = false
     
     @Option(help: "exportOptionsPlist路径")
     var exportOptionsPlist: String?
     
-    @Option(help: "pgyer apikey")
+    @Option(help: "pgyer apikey 访问 https://www.pgyer.com/account/api 可以获取API KEY")
     var apiKey: String = "64afc04184d4e9152e4343ff67edfa27"
+    
     
     var path: String = ""
     
     var name: String = ""
-    
-    @Unparsed
+     
+    // AsyncParsableCommand 是decoable，所以用UnDecodable，否则无法使用没有遵守decoable协议的类作为变量方便使用
+    @UnDecodable
     var logger: Logger = Logger(label: "ryze")
     
-    mutating func validate() throws {
-        
-    }
+    // MARK: - validate
+//    mutating func validate() throws {
+//        if apiKey.isEmpty {
+//            throw ValidationError("apiKey 不能为空")
+//        }
+//    }
     
+    // MARK: - run
     mutating func run() async throws {
         
         Figlet.say("RYZE")
@@ -44,14 +50,15 @@ struct Ryze: AsyncParsableCommand {
         }
         
         name = result.lastComponentWithoutExtension
-        logger.info("检测到工程名：\(name)")
         path = result.string
         logger.info("检测到xcodeproj文件：\(path)")
         
         try shellOut(to: .gitPull())
         print(">>> git pull".green)
         
-        try installPod()
+        print(">>> pod install Begin".yellow)
+        try shellOut(to: .installAndUpdateCocoaPods())
+        print(">>> pod install Success".green)
        
         let ipaTool = try generateIPATool()
         
@@ -94,13 +101,9 @@ extension Ryze {
                 conf.buildSettings[XcodeProj.Key.buildNumber] = buildNumber + 1
             }
         }
-        
         try xcodeProj.write(path: projectPath)
     }
-    
-    
-    
-    
+
     /// 查询当前目录下的xcodeproj文件
     /// - Returns: 文件路径对象
     func findXcodeProjPath() throws -> Path? {
@@ -125,12 +128,7 @@ extension Ryze {
         return result
     }
     
-    func installPod() throws {
-        print("=========== pod install Begin ===========".yellow)
-        try shellOut(to: .installAndUpdateCocoaPods())
-        print("=========== pod install Success ===========".green)
-    }
-    
+    /// 生成IPATool
     func generateIPATool() throws -> IPATool {
         
         let currentPath = Path.current.string
