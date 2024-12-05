@@ -21,6 +21,9 @@ struct Ryze: AsyncParsableCommand {
     @Option(help: "exportOptionsPlist路径")
     var exportOptionsPlist: String?
     
+    @Option(help: "pgyer apikey")
+    var apiKey: String = "64afc04184d4e9152e4343ff67edfa27"
+    
     var path: String = ""
     
     var name: String = ""
@@ -152,7 +155,7 @@ extension Ryze {
         let exportPath = tempBuildPath
         let configuration: Configuration = .debug
 
-        let ipaTool = IPATool(scheme: name, workspace: workspace, configuration: configuration, archivePath: archivePath, exportPath: exportPath, exportOptionsPlist: exportOptionsPlist)
+        let ipaTool = IPATool(scheme: name, workspace: workspace, configuration: configuration, archivePath: archivePath, exportPath: exportPath, exportOptionsPlist: exportOptionsPlist, apiKey: apiKey)
         
         return ipaTool
 

@@ -28,6 +28,8 @@ struct IPATool {
     // exportOptionsPlist
     let exportOptionsPlist: String
     
+    let apiKey: String
+    
     let logger: Logger = Logger(label: "ryze-ipatool")
     
     /// IPATool
@@ -38,13 +40,14 @@ struct IPATool {
     ///   - archivePath: 生成的xcarchive文件路径
     ///   - exportPath: IPA导出路径
     ///   - exportOptionsPlist: 导出参数文件路径
-    init(scheme: String, workspace: String, configuration: Configuration, archivePath: String, exportPath: String, exportOptionsPlist: String) {
+    init(scheme: String, workspace: String, configuration: Configuration, archivePath: String, exportPath: String, exportOptionsPlist: String, apiKey: String) {
         self.scheme = scheme
         self.workspace = workspace
         self.configuration = configuration
         self.archivePath = archivePath
         self.exportPath = exportPath
         self.exportOptionsPlist = exportOptionsPlist
+        self.apiKey = apiKey
     }
 }
 
@@ -115,7 +118,6 @@ private extension IPATool {
     }
     
     func getPGYERCOSToken() async throws -> PGYToken{
-        let apiKey = "64afc04184d4e9152e4343ff67edfa27"
         let response = try await AF.request("https://www.pgyer.com/apiv2/app/getCOSToken", method: .post, parameters: ["_api_key": apiKey, "buildType": "ios"])
             .serializingDecodable(PGYResponseData.self)
             .value
