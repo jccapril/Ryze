@@ -13,6 +13,7 @@ let package = Package(
         .package(url: "https://github.com/onevcat/Rainbow", from: "4.0.0"),
         .package(url: "https://github.com/JohnSundell/ShellOut.git", from: "2.0.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -26,6 +27,7 @@ let package = Package(
                 .product(name: "Rainbow", package: "Rainbow"),
                 .product(name: "ShellOut", package: "ShellOut"),
                 .product(name: "Logging", package: "swift-log"),
+                .product(name: "Alamofire", package: "Alamofire"),
             ],
             path: "Sources"
         ),

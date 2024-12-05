@@ -14,7 +14,7 @@ import ShellOut
 import Logging
 
 @main
-struct Ryze: ParsableCommand {
+struct Ryze: AsyncParsableCommand {
     @Flag(name: .customLong("beta"), help: "是否Beta版本")
     var isBeta = false
     
@@ -38,7 +38,7 @@ struct Ryze: ParsableCommand {
         
     }
     
-    mutating func run() throws {
+    mutating func run() async throws {
         
         Figlet.say("RYZE")
         
@@ -56,13 +56,14 @@ struct Ryze: ParsableCommand {
        
         let ipaTool = try generateIPATool()
         
-        logger.info("开始打包")
+        print(">>> 开始打包".yellow)
         try ipaTool.build()
-        logger.info("打包结束")
+        print(">>> 打包结束".green)
         
         // TODO: - 上传 IPA
-        try ipaTool.uploadPGY()
-        
+        print(">>> 开始上传PGYER".yellow)
+        try await ipaTool.uploadPGY()
+        print(">>> 上传PGYER成功".green)
         // TODO: - 删除 xcode build 生成的临时文件
         try ipaTool.deleteTempFiles()
         
