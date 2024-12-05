@@ -28,9 +28,6 @@ struct Ryze: AsyncParsableCommand {
     
     var name: String = ""
     
-    @Argument(help: "项目名称")
-    var argument: [String]
-    
     @Unparsed
     var logger: Logger = Logger(label: "ryze")
     
@@ -45,13 +42,12 @@ struct Ryze: AsyncParsableCommand {
         
         Figlet.say("RYZE")
         
-        name = argument[0]
-        
         guard let result = try findXcodeProjPath() else {
             throw ValidationError("没有找到xcodeproj文件".red)
         }
-
         
+        name = result.lastComponentWithoutExtension
+        logger.info("检测到工程名：\(name)")
         path = result.string
         logger.info("检测到xcodeproj文件：\(path)")
         
@@ -67,8 +63,9 @@ struct Ryze: AsyncParsableCommand {
         print(">>> 开始上传PGYER".yellow)
         try await ipaTool.uploadPGY()
         print(">>> 上传PGYER成功".green)
-        // TODO: - 删除 xcode build 生成的临时文件
+
         try ipaTool.deleteTempFiles()
+        print(">>> 删除编译生成的相关文件".green)
         
         try increaseBuildNumber()
         print(">>> 增加Build号".green)

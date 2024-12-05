@@ -7,24 +7,24 @@
 
 import Foundation
 
-import Foundation
+protocol SendCodable: Sendable, Codable { }
 
-// MARK: - PGYTOken
-struct PGYResponseData: Codable {
+// MARK: - PGYResponse
+struct PGYResponseData<T: SendCodable>: SendCodable {
     let code: Int
     let message: String
-    let data: PGYToken
+    let data: T?
 }
 
-// MARK: - DataClass
-struct PGYToken: Codable {
+// MARK: - PGYToken
+struct PGYToken: SendCodable {
     let params: Params
     let key: String
     let endpoint: String
 }
 
 // MARK: - Params
-struct Params: Codable {
+struct Params: SendCodable {
     let signature, xCosSecurityToken, key: String
 
     enum CodingKeys: String, CodingKey {
@@ -32,4 +32,13 @@ struct Params: Codable {
         case xCosSecurityToken = "x-cos-security-token"
         case key
     }
+}
+
+
+
+// MARK: - PGYBuildInfo
+struct PGYBuildInfo: SendCodable {
+    let buildQRCodeURL: String
+    let buildShortcutUrl: String
+    let buildName: String
 }

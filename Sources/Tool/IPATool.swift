@@ -10,6 +10,7 @@ import ShellOut
 import Rainbow
 import Logging
 import Alamofire
+import PathKit
 
 
 /// IPA工具
@@ -62,36 +63,28 @@ extension IPATool {
     
     func uploadPGY() async throws {
     
-        logger.info("开始获取PGYER COSToKen")
+        logger.info("正在获取PGYER COSToKen")
         let token = try await getPGYERCOSToken()
         logger.info("获取PGYER COSToKen成功")
         
-        logger.info("ipa 开始上传PGYER")
-        let ipaPath = "\(exportPath)/\(scheme).ipa"
-        let url = token.endpoint
-        let key = token.key
-        let signature = token.params.signature
-        let xCosSecurityToken = token.params.xCosSecurityToken
-        let response = try await AF.upload(multipartFormData: { data in
-            data.append(key.data(using: .utf8)!, withName: "key")
-            data.append(signature.data(using: .utf8)!, withName: "signature")
-            data.append(xCosSecurityToken.data(using: .utf8)!, withName: "x-cos-security-token")
-            data.append(URL(fileURLWithPath: ipaPath), withName: "file")
-        }, to: url).uploadProgress { progress in
-            logger.info("uploadProgress\(progress.completedUnitCount)")
-        }
-        .serializingDecodable(Empty.self, emptyResponseCodes: [204])
-        .value
+        logger.info("ipa 正在上传PGYER")
+        try await uploadPGYER(token: token)
         logger.info("ipa 上传PGYER 成功")
-        
-        logger.info("开始获取ipa信息")
-        
-        logger.info("获取ipa信息成功")
+    
+        logger.info("正在获取ipa信息")
+        // 休眠3秒再去获取，以防获取不成功
+        try await Task.sleep(for: .seconds(3))
+        // 方法内部惠重试3次
+        guard let buildInfo = try await getPGYERBuildInfo(key: token.key) else {
+            return
+        }
+        logger.info("获取ipa信息成功 qrcode:\(buildInfo.buildQRCodeURL)")
         
     }
     
     func deleteTempFiles() throws {
-        
+        try Path(archivePath).delete()
+        try Path(exportPath).delete()
     }
 }
 
@@ -119,9 +112,55 @@ private extension IPATool {
     
     func getPGYERCOSToken() async throws -> PGYToken{
         let response = try await AF.request("https://www.pgyer.com/apiv2/app/getCOSToken", method: .post, parameters: ["_api_key": apiKey, "buildType": "ios"])
-            .serializingDecodable(PGYResponseData.self)
+            .serializingDecodable(PGYResponseData<PGYToken>.self)
             .value
-        return response.data
+        guard let data = response.data else {
+            throw IPAToolError.uploadFailure(response.message)
+        }
+        return data
+    }
+    
+    func uploadPGYER(token: PGYToken) async throws {
+        let ipaPath = "\(exportPath)/\(scheme).ipa"
+        let url = token.endpoint
+        let key = token.key
+        let signature = token.params.signature
+        let xCosSecurityToken = token.params.xCosSecurityToken
+        let _ = try await AF.upload(multipartFormData: { data in
+            data.append(key.data(using: .utf8)!, withName: "key")
+            data.append(signature.data(using: .utf8)!, withName: "signature")
+            data.append(xCosSecurityToken.data(using: .utf8)!, withName: "x-cos-security-token")
+            data.append(URL(fileURLWithPath: ipaPath), withName: "file")
+        }, to: url).uploadProgress { progress in
+            logger.info("上传进度: \(progress.fractionCompleted)")
+        }
+        .serializingDecodable(Empty.self, emptyResponseCodes: [204])
+        .value
+    }
+    
+    /// 获取 PGYER BuildInfo
+    /// - Parameters:
+    ///   - key: CosToken接口返回的key
+    ///   - retryTime: 重试次数
+    /// - Returns: PGYER BuildInfo
+    func getPGYERBuildInfo(key: String, retryTime: Int = 0) async throws -> PGYBuildInfo?{
+        let response = try await AF.request("https://www.pgyer.com/apiv2/app/buildInfo", method: .get, parameters: ["_api_key": apiKey, "buildKey": key], encoding: URLEncoding.queryString)
+            .onHTTPResponse(perform: { response in
+                logger.debug("\(response)")
+            })
+            .serializingDecodable(PGYResponseData<PGYBuildInfo>.self)
+            .value
+        
+        guard let data = response.data else {
+            logger.error("\(response.message)")
+            if retryTime > 2 {
+                return nil
+            }else {
+                try await Task.sleep(for: .seconds(3))
+                return try await getPGYERBuildInfo(key: key, retryTime: retryTime + 1)
+            }
+        }
+        return data
     }
 }
 
