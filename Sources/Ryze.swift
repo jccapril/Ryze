@@ -31,9 +31,6 @@ struct Ryze: AsyncParsableCommand {
     @Unparsed
     var logger: Logger = Logger(label: "ryze")
     
-//    @Unparsed
-//    var ipaTool: IPATool?
-    
     mutating func validate() throws {
         
     }
@@ -51,6 +48,9 @@ struct Ryze: AsyncParsableCommand {
         path = result.string
         logger.info("检测到xcodeproj文件：\(path)")
         
+        try shellOut(to: .gitPull())
+        print(">>> git pull".green)
+        
         try installPod()
        
         let ipaTool = try generateIPATool()
@@ -59,7 +59,6 @@ struct Ryze: AsyncParsableCommand {
         try ipaTool.build()
         print(">>> 打包结束".green)
         
-        // TODO: - 上传 IPA
         print(">>> 开始上传PGYER".yellow)
         try await ipaTool.uploadPGY()
         print(">>> 上传PGYER成功".green)
@@ -70,10 +69,12 @@ struct Ryze: AsyncParsableCommand {
         try increaseBuildNumber()
         print(">>> 增加Build号".green)
         
-        // TODO: - 提交 Git
+        try shellOut(to: .gitCommit(message: "build+1"))
+        print(">>> git commit".green)
+        
+        try shellOut(to: .gitPush())
+        print(">>> git push".green)
     }
-    
-
 }
 
 

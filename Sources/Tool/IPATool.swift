@@ -156,6 +156,7 @@ private extension IPATool {
             if retryTime > 2 {
                 return nil
             }else {
+                logger.info("没有获取到buildInfo，重试...")
                 try await Task.sleep(for: .seconds(3))
                 return try await getPGYERBuildInfo(key: key, retryTime: retryTime + 1)
             }
