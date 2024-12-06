@@ -34,7 +34,6 @@ struct Build: AsyncParsableCommand {
     
     var name: String = ""
      
-    // AsyncParsableCommand 是decoable，所以用UnDecodable，否则无法使用没有遵守decoable协议的类作为变量方便使用
     @UnDecodable
     var logger: Logger = Logger(label: "ryze")
     
@@ -160,27 +159,5 @@ extension Build {
         
         return ipaTool
 
-    }
-}
-
-// MARK: - XcodeProj Key
-extension XcodeProj {
-    
-    enum Key {
-        static let buildNumber = "CURRENT_PROJECT_VERSION"
-    }
-    
-}
-
-// MARK: - Path Extension
-extension Path {
-    /// 是否是 XcodeProj 文件
-    var isXcodeProj: Bool {
-        self.extension == "xcodeproj"
-    }
-    
-    /// 是否是 XcodeProj 文件
-    var isXcWorkspace: Bool {
-        self.extension == "xcworkspace"
     }
 }
