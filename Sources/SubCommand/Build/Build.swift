@@ -23,7 +23,7 @@ struct Build: AsyncParsableCommand {
         )
     }
     
-    @Option(help: "exportOptionsPlist路径")
+    @Option(help: "exportOptionsPlist路径，默认路径是工程一级目录")
     var exportOptionsPlist: String?
     
     @Option(help: "pgyer apikey 访问 https://www.pgyer.com/account/api 可以获取API KEY")
