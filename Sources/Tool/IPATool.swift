@@ -111,13 +111,13 @@ private extension IPATool {
     }
     
     func getPGYERCOSToken() async throws -> PGYToken{
-        let response = try await AF.request("https://www.pgyer.com/apiv2/app/getCOSToken", method: .post, parameters: ["_api_key": apiKey, "buildType": "ios"])
-            .serializingDecodable(PGYResponseData<PGYToken>.self)
-            .value
-        guard let data = response.data else {
-            throw IPAToolError.uploadFailure(response.message)
+        
+        let result: PGYToken? = try await API.GET(Self.pgyerGetCOSTokenURL, parameters: ["_api_key": apiKey, "buildType": "ios"])
+        
+        guard let result else {
+            throw IPAToolError.uploadFailure("")
         }
-        return data
+        return result
     }
     
     func uploadPGYER(token: PGYToken) async throws {
@@ -144,15 +144,9 @@ private extension IPATool {
     ///   - retryTime: 重试次数
     /// - Returns: PGYER BuildInfo
     func getPGYERBuildInfo(key: String, retryTime: Int = 0) async throws -> PGYBuildInfo?{
-        let response = try await AF.request("https://www.pgyer.com/apiv2/app/buildInfo", method: .get, parameters: ["_api_key": apiKey, "buildKey": key], encoding: URLEncoding.queryString)
-            .onHTTPResponse(perform: { response in
-                logger.debug("\(response)")
-            })
-            .serializingDecodable(PGYResponseData<PGYBuildInfo>.self)
-            .value
+        let result: PGYBuildInfo? = try await API.GET(Self.pgyerBuildInfoURL, parameters: ["_api_key": apiKey, "buildKey": key])
         
-        guard let data = response.data else {
-            logger.error("\(response.message)")
+        guard let result else {
             if retryTime > 2 {
                 return nil
             }else {
@@ -161,8 +155,14 @@ private extension IPATool {
                 return try await getPGYERBuildInfo(key: key, retryTime: retryTime + 1)
             }
         }
-        return data
+        return result
     }
+}
+
+extension IPATool {
+    static let pgyerBuildInfoURL = "https://www.pgyer.com/apiv2/app/buildInfo"
+    
+    static let pgyerGetCOSTokenURL = "https://www.pgyer.com/apiv2/app/getCOSToken"
 }
 
 enum IPAToolError: Error {

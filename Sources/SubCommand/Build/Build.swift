@@ -30,9 +30,8 @@ struct Build: AsyncParsableCommand {
     var apiKey: String = "64afc04184d4e9152e4343ff67edfa27"
     
     
-    var path: String = ""
-    
-    var name: String = ""
+    @UnDecodable
+    var projectPath: Path?
      
     @UnDecodable
     var logger: Logger = Logger(label: "ryze")
@@ -49,13 +48,12 @@ struct Build: AsyncParsableCommand {
         
         Figlet.say("BUILD")
         
-        guard let result = try findXcodeProjPath() else {
+        guard let projectPath = try Path.current.findXcodeProjPath() else {
             throw ValidationError("没有找到xcodeproj文件".red)
         }
+        logger.info("检测到xcodeproj文件：\(projectPath.string)")
+        self.projectPath = projectPath
         
-        name = result.lastComponentWithoutExtension
-        path = result.string
-        logger.info("检测到xcodeproj文件：\(path)")
         
         try shellOut(to: .gitPull())
         print(">>> git pull".green)
@@ -94,43 +92,23 @@ extension Build {
     
     /// BuildNumber + 1
     func increaseBuildNumber() throws {
-        
-        let projectPath = Path(path)
+        guard let projectPath else {
+            throw ValidationError("没有找到xcodeProj文件".red)
+        }
         let xcodeProj = try XcodeProj(path: projectPath)
         xcodeProj.increaseBuildNumber()
         try xcodeProj.write(path: projectPath)
     }
 
-    /// 查询当前目录下的xcodeproj文件]
-    /// - Returns: 文件路径对象
-    func findXcodeProjPath() throws -> Path? {
-        
-        let path = Path.current
-        
-        let result = try path.children().first { innerPath in
-            innerPath.isXcodeProj
-        }
-        return result
-    }
-    
-    /// 查询当前目录下的xcworkspace文件
-    /// - Returns: 文件路径对象
-    func findXcWorkspacePath() throws -> Path? {
-        
-        let path = Path.current
-        
-        let result = try path.children().first { innerPath in
-            innerPath.isXcWorkspace
-        }
-        return result
-    }
-    
     /// 生成IPATool
     func generateIPATool() throws -> IPATool {
-        
+        guard let projectPath else {
+            throw ValidationError("没有找到xcodeProj文件".red)
+        }
         let currentPath = Path.current.string
         let tempBuildPath = "\(currentPath)/.build"
-       
+        let name = projectPath.lastComponentWithoutExtension
+        
         let workspace = "\(currentPath)/\(name).xcworkspace"
         let workspacePath = Path(workspace)
         if !workspacePath.exists {
