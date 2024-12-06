@@ -22,3 +22,11 @@ extension XcodeProj {
     }
     
 }
+
+extension XcodeProj {
+    
+    enum Key {
+        static let buildNumber = "CURRENT_PROJECT_VERSION"
+    }
+    
+}

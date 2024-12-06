@@ -7,7 +7,7 @@ swift build -c release
 ```
 
 
-##
+## 打包
 将编译出的可执行文件放入 /usr/local/bin 或者 你自己的环境变量
 运行以下命令：
 ```
@@ -15,3 +15,9 @@ ryze build [--export-options-plist <export-options-plist>] [--api-key <api-key>]
 
 ```
 
+## 混淆 pending
+```
+ryze mixup
+```
+
+ 

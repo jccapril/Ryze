@@ -47,7 +47,7 @@ struct Build: AsyncParsableCommand {
     // MARK: - run
     mutating func run() async throws {
         
-        Figlet.say("RYZE")
+        Figlet.say("BUILD")
         
         guard let result = try findXcodeProjPath() else {
             throw ValidationError("没有找到xcodeproj文件".red)

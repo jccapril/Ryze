@@ -18,3 +18,16 @@ extension Path {
         self.extension == "xcworkspace"
     }
 }
+
+
+extension Path {
+    /// 是否是 swift 文件
+    var isSwift: Bool {
+        self.extension == "swift"
+    }
+    
+    var isObjc: Bool {
+        self.extension == "h" || self.extension == "m"
+    }
+    
+}
