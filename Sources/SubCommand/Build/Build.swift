@@ -94,21 +94,14 @@ extension Build {
     
     /// BuildNumber + 1
     func increaseBuildNumber() throws {
-    
+        
         let projectPath = Path(path)
         let xcodeProj = try XcodeProj(path: projectPath)
-        for conf in xcodeProj.pbxproj.buildConfigurations where conf.buildSettings[XcodeProj.Key.buildNumber] != nil {
-            guard let buildNumberString = conf.buildSettings[XcodeProj.Key.buildNumber] as? String else {
-                return
-            }
-            if let buildNumber = Int(buildNumberString) {
-                conf.buildSettings[XcodeProj.Key.buildNumber] = buildNumber + 1
-            }
-        }
+        xcodeProj.increaseBuildNumber()
         try xcodeProj.write(path: projectPath)
     }
 
-    /// 查询当前目录下的xcodeproj文件
+    /// 查询当前目录下的xcodeproj文件]
     /// - Returns: 文件路径对象
     func findXcodeProjPath() throws -> Path? {
         
