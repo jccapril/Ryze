@@ -26,6 +26,7 @@ extension Path {
         self.extension == "swift"
     }
     
+    /// 是否是 OC文件
     var isObjc: Bool {
         self.extension == "h" || self.extension == "m"
     }
@@ -34,7 +35,6 @@ extension Path {
 
 
 extension Path {
-    
     
     /// 查询当前目录下的xcodeproj文件]
     /// - Returns: 文件路径对象
@@ -56,7 +56,10 @@ extension Path {
         }
         return result
     }
-    
+}
+
+
+extension Path {
     /// 重命名文件前缀
     /// - Parameters:
     ///   - prefix: 原前缀

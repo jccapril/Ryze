@@ -1,5 +1,5 @@
 {
-  "originHash" : "50249bc093dab28c0a3c7b894b9e7188d5f7974f37045b1a0b313150bc3b169b",
+  "originHash" : "416d8a1f6626f8518560e85015959b587c88abb88288f1c108b021617f5d5d3e",
   "pins" : [
     {
       "identity" : "aexml",
@@ -47,15 +47,6 @@
       }
     },
     {
-      "identity" : "shellout",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JohnSundell/ShellOut.git",
-      "state" : {
-        "revision" : "e1577acf2b6e90086d01a6d5e2b8efdaae033568",
-        "version" : "2.3.0"
-      }
-    },
-    {
       "identity" : "spectre",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kylef/Spectre.git",
@@ -80,6 +71,15 @@
       "state" : {
         "revision" : "96a2f8a0fa41e9e09af4585e2724c4e825410b91",
         "version" : "1.6.2"
+      }
+    },
+    {
+      "identity" : "swiftshell",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kareman/SwiftShell",
+      "state" : {
+        "revision" : "99680b2efc7c7dbcace1da0b3979d266f02e213c",
+        "version" : "5.1.0"
       }
     },
     {

@@ -13,7 +13,8 @@ struct Ryze: AsyncParsableCommand {
         CommandConfiguration(
             subcommands: [
                 Build.self,
-                Mixup.self
+                Mixup.self,
+                Install.self,
             ]
         )
     }
