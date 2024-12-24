@@ -1,5 +1,5 @@
 {
-  "originHash" : "416d8a1f6626f8518560e85015959b587c88abb88288f1c108b021617f5d5d3e",
+  "originHash" : "a9353a9caaa66eb070520eac9679a2d4dbbf47852fe74043ac5abb9a3bb2e9a2",
   "pins" : [
     {
       "identity" : "aexml",
@@ -44,6 +44,15 @@
       "state" : {
         "revision" : "e0dada9cd44e3fa7ec3b867e49a8ddbf543e3df3",
         "version" : "4.0.1"
+      }
+    },
+    {
+      "identity" : "shellout",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jccapril/ShellOut.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "3e13bc6f36278bfeb5cfa20d28d17b24a486b945"
       }
     },
     {
