@@ -23,7 +23,7 @@ struct Check: AsyncParsableCommand {
     var keyword: String =  """
     Golden Flower、golden_flower、goldenflower、game、fish、wheel、poker、boracay、Patti、call、\
     avchat、chat_to、vichat、card、chat_video、chat_voic、order_income、click_to_video_chat、\
-    voice_vedio_chat、last_chat、last_voice、honor_explain_rule、age_limit
+    voice_vedio_chat、last_chat、last_voice、honor_explain_rule
     """
     
 
