@@ -59,30 +59,30 @@ struct Image: ParsableCommand {
 //    }
     
     // 修改文件夹下所有PNG图片的哈希值
-    func modifyHashes(in folderPath: String) {
-        do {
-            
-            let currentPath = Path.current
-            currentPath.forEach { path in
-                if filePath.hasSuffix(".png") {
-                    let imageData = try imageData(for: filePath)
-                    guard let data = imageData else {
-                        print("Failed to read image at path: \(filePath)")
-                        continue
-                    }
-                    
-                    let newHash = sha256(data)
-                    print("New hash for \(filePath): \(newHash)")
-                    
-                    // 这里可以选择保存修改后的图片数据回文件系统
-                    // let outputFilePath = getOutputPath(for: filePath)
-                    // try data.write(to: URL(fileURLWithPath: outputFilePath))
-                }
-            }
-        } catch {
-            print("Error processing folder: \(error.localizedDescription)")
-        }
-    }
+//    func modifyHashes(in folderPath: String) {
+//        do {
+//            
+//            let currentPath = Path.current
+//            currentPath.forEach { path in
+//                if filePath.hasSuffix(".png") {
+//                    let imageData = try imageData(for: filePath)
+//                    guard let data = imageData else {
+//                        print("Failed to read image at path: \(filePath)")
+//                        continue
+//                    }
+//                    
+//                    let newHash = sha256(data)
+//                    print("New hash for \(filePath): \(newHash)")
+//                    
+//                    // 这里可以选择保存修改后的图片数据回文件系统
+//                    // let outputFilePath = getOutputPath(for: filePath)
+//                    // try data.write(to: URL(fileURLWithPath: outputFilePath))
+//                }
+//            }
+//        } catch {
+//            print("Error processing folder: \(error.localizedDescription)")
+//        }
+//    }
 
 
     

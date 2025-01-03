@@ -7,6 +7,7 @@
 
 import Alamofire
 import Logging
+import Foundation
 
 struct API {
     
@@ -39,5 +40,15 @@ struct API {
         return value.data
     }
     
+    
+    static func GET(_ convertible: any URLConvertible) async throws -> Data {
+        let data = try await AF.request(convertible, method: .get)
+            .onHTTPResponse(perform: { response in
+                logger.debug("\(response)")
+            })
+            .serializingData()
+            .value
+        return data
+    }
 }
 
