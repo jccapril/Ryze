@@ -20,7 +20,7 @@ struct CheckKeyword: ParsableCommand {
     @Option(help: "关键字，以、分割")
     var keyword: String =  """
     chat_price、chat_money、chatPrice、chatMoney、video_price、photo_price、\
-    bigwin、big_win、prize_pool、win_coin、Grand_prize、lottery、slotgame、poker、\
+    bigwin、big_win、prize_pool、win_coin、grand_prize、lottery、slotgame、poker、\
     alipay、bank、bank_id、wx_pay、web_pay、pay_type、\
     game、game_id、game_icon、game_list、\
     prize、money
@@ -40,9 +40,9 @@ struct CheckKeyword: ParsableCommand {
         
         let path = Path.current
         
-        let keywordList = keyword.components(separatedBy: "、")
+        let keywords = keyword.components(separatedBy: "、")
        
-        searchFiles(in: path, keywords: keywordList)
+        searchFiles(in: path, keywords: keywords)
         
     }
     
@@ -54,22 +54,37 @@ struct CheckKeyword: ParsableCommand {
             return
         }
 
-        // 遍历目录及其子目录中的所有文件
-        directory.forEach {
-            if $0.isFile && !isWhiteList(file: $0) {
-                searchKeyword(in: $0, keywords: keywords)
+        do {
+            for file in try directory.recursiveChildren() {
+                if file.isFile && !isWhiteList(file: file) {
+                    searchKeyword(in: file, keywords: keywords)
+//                    print("\(file)".yellow)
+                } else {
+//                    print("\(file) 跳过或不是文件".blue)
+                }
             }
+        } catch {
+            print("无法获取目录内容：\(directory), 错误：\(error)".red)
         }
+        
+//        // 遍历目录及其子目录中的所有文件
+//        directory.forEach {
+//            if $0.isFile && !isWhiteList(file: $0) {
+//                searchKeyword(in: $0, keywords: keywords)
+//            }else {
+//                print("\($0) 不是文件".yellow)
+//            }
+//        }
     }
     
     func isWhiteList(file: Path) -> Bool {
         let whiteList: [String] = [
             "Pods/AgoraRtcEngine_Special_iOS", "Pods/FBSDKCoreKit",
-            "Pods/BTBytedEffect", "Pods/pop", "Pods/GoogleMLKit",
+            "Pods/BTBytedEffect", "Pods/pop", "Pods/GoogleMLKit","/Pods/VolcEngineRTC-VE/VolcEngineRTC",
             "Pods/FirebaseAnalytics", "Pods/AppsFlyerFramework", "Pods/MLKitVision",
             "Pods/CocoaAsyncSocket", "Pods/Texture", "Pods/MLKitFaceDetection",
             "Pods/CocoaAsyncSocket", ".git/", "Pods/MLKitCommon",
-            "Pods/FirebaseCore/"
+            "Pods/FirebaseCore/", "Example/"
         ]
         return whiteList.contains {
             file.string.contains($0)
@@ -84,7 +99,7 @@ struct CheckKeyword: ParsableCommand {
                    let lines = content.split(separator: "\n")
                    for (index, line) in lines.enumerated() {
                        keywords.forEach { keyword in
-                           if line.contains(keyword) {
+                           if line.lowercased().contains(keyword.lowercased()) {
                                print("匹配到关键字\(keyword)\n\(file)[第\(index + 1)行]\n\(line)".red)
                            }
                        }
