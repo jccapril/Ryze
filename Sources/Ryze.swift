@@ -16,6 +16,7 @@ struct Ryze: AsyncParsableCommand {
                 Mixup.self,
                 Install.self,
                 Check.self,
+                CheckKeyword.self,
             ]
         )
     }
