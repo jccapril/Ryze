@@ -23,7 +23,8 @@ struct CheckKeyword: ParsableCommand {
     bigwin、big_win、prize_pool、win_coin、grand_prize、lottery、slotgame、poker、\
     alipay、bank、bank_id、wx_pay、web_pay、pay_type、\
     game、game_id、game_icon、game_list、\
-    prize、money
+    prize、money、\
+    like_poppo、like_mimi、like_miti、like_vone、poppo、vone、mimi、miti"
     """
     
 
@@ -83,8 +84,9 @@ struct CheckKeyword: ParsableCommand {
             "Pods/BTBytedEffect", "Pods/pop", "Pods/GoogleMLKit","/Pods/VolcEngineRTC-VE/VolcEngineRTC",
             "Pods/FirebaseAnalytics", "Pods/AppsFlyerFramework", "Pods/MLKitVision",
             "Pods/CocoaAsyncSocket", "Pods/Texture", "Pods/MLKitFaceDetection",
-            "Pods/CocoaAsyncSocket", ".git/", "Pods/MLKitCommon",
-            "Pods/FirebaseCore/", "Example/"
+            "Pods/CocoaAsyncSocket", ".git/", "Pods/MLKitCommon", "/Pods/Google-Mobile-Ads-SDK",
+            "/Pods/MJExtension", "Pods/FirebaseCore/", "/Pods/VolcEngineRTC-VE",
+            "Example/"
         ]
         return whiteList.contains {
             file.string.contains($0)
